@@ -47,7 +47,11 @@ if (!(Test-Path $BinDir)) {
 }
 
 Invoke-WebRequest $DenoUri -OutFile $DenoZip -UseBasicParsing
-Expand-Archive $DenoZip -Destination $BinDir -Force
+if (Test-Path $DenoExe){
+  Remove-Item -Force $DenoExe
+}
+Add-Type -AssemblyName System.IO.Compression.FileSystem
+[System.IO.Compression.ZipFile]::ExtractToDirectory($DenoZip, $BinDir)
 Remove-Item $DenoZip
 
 $User = [EnvironmentVariableTarget]::User
